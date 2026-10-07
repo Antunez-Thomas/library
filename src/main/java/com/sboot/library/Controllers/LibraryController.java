@@ -6,6 +6,7 @@ import com.sboot.library.Services.ServiceBook;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ public class LibraryController {
 
     @GetMapping("/{title}")
     public String foundBook(@PathVariable String title) {
-        return bookService.searchBook(title);
+        return bookService.findBookByTitle(title);
     }
 
     @GetMapping("/library")
@@ -30,8 +31,18 @@ public class LibraryController {
     }
     @GetMapping("/id/{id}")
     public ResponseEntity<Books> findID(@PathVariable long id){
-        return repositoryBooks.findId()
+        return repositoryBooks.findId(1)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/clone")
+    public String cloneBook(){
+        Books original = new Books(1L,"Miguel de Cervantes", "El Quijote", LocalDate.of(1605, 1, 16));
+        Books copy = original.clone();
+        copy.setId(8);
+        copy.setTitle("Copy test");
+
+        return "Original: " + original.toString() + " | Copy: " + copy.toString();
     }
 }

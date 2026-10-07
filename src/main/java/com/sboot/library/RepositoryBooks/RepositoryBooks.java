@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class RepositoryBooks {
+public class RepositoryBooks implements I_RepositoryBooks {
     private final List<Books> books = new ArrayList<>();
 
     public RepositoryBooks(){
@@ -20,14 +20,28 @@ public class RepositoryBooks {
         books.add(new Books(5L, "F. Scott Fitzgerald", "El Gran Gatsby", LocalDate.of(1925, 4, 10)));
     }
 
+    @Override
     public List<Books>findAll(){
         return books;
     }
 
-    public Optional<Books>findId(long idBooks){
+    @Override
+    public Optional<Books>findById(long idBooks){
         return books.stream()
                 .filter(books1 -> books1.getIdBook()==idBooks)
                 .findFirst();
 
+    }
+    @Override
+    public void saveBook(Books book) {
+       findById(book.getIdBook()).ifPresent(book::remove);
+       books.add(book);
+    }
+    @Override
+    public void deleteById(long idBooks) {
+        findById(idBooks).ifPresent(books::remove);
+    }
+    public Optional<Books> findId(long idBooks){
+        return findById(idBooks);
     }
 }
